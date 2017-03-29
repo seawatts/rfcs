@@ -14,13 +14,13 @@ Especially for newer developers, it can be confusing why some of your addons get
 
 # Detailed design
 
-Since both the existing and suggested JSON files can be parsed and read as JSON, it makes sense that we could diff each key and value programmatically and have more information than a simple text comparison.
-Using [json-merge-interactive](https://github.com/rtablada/json-merge-interactive) we could ask the user for each conflicting key (or even use semver comparisons to make educated guesses) and guide them along the way.
+Using [three-way-merger](https://github.com/bantic/three-way-merger) you can actually do a compare between the currently installed version of ember-cli new output to the users local files to the ember-cli version that the use is upgrading to. By doing this it will preserve the users installed dependencies and removed dependencies, i.e. if they remove `ember-data` from the package.json it would not add it back in after doing the three way merge. 
+
+Because of the way [three-way-merger](https://github.com/bantic/three-way-merger) generates it's output. You will be able to prompt the user in which dependencies will be added, changed, and removed. We can then use ui.prompt to allow the user to interactivly select which dependencies they want in their final package.json file.
 
 # Drawbacks
 
-* This design does not account for removed packages, addons, or JSON nodes.
-* This will lead to resorting of JSON file key value structures because of the nature of `JSON.stringify`.
+* We might have to improve [three-way-merger](https://github.com/bantic/three-way-merger) to be able to have this also work for other json files e.x. bower.json
 
 # Alternatives
 
@@ -28,6 +28,6 @@ Another way around this could be to use a descriptive broccoli style DSL to allo
 
 # Unresolved questions
 
-* Does the proposed [json-merge-interactive package](https://github.com/rtablada/json-merge-interactive) give enough control for file diffing?
-* Are there needed improvements in performance to the json-merge-interactive.
 * How do we tell when files should use the traditional merge and diff vs JSON diff (file extension, registration in the blueprint, etc)?
+* Should this be the default behavior during `ember init`
+* Should we introduce a new command `ember upgrade:deps`
